@@ -21,11 +21,14 @@ class PostQuerySet(models.QuerySet):
         Также сокращает кол-во запросов
         в сравнении с использованием 2-х "annotate". '''
 
-
         posts = self
         posts_ids = [post.id for post in posts]
-        posts_with_comments = Post.objects.filter(id__in=posts_ids).annotate(comments_count=Count('comments'))
-        ids_and_commets = posts_with_comments.values_list('id', 'comments_count')
+        posts_with_comments = Post.objects.filter(id__in=posts_ids) \
+            .annotate(comments_count=Count('comments'))
+        ids_and_commets = posts_with_comments.values_list(
+            'id',
+            'comments_count'
+            )
         count_for_id = dict(ids_and_commets)
         for post in posts:
             post.comments_count = count_for_id[post.id]
